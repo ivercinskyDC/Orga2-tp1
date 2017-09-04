@@ -1,6 +1,11 @@
 extern free
 extern malloc
 
+%define obdd_size 16
+%define obdd_manager_offset 0
+%define obdd_root_offset 8
+
+
 global obdd_mgr_mk_node
 obdd_mgr_mk_node:
 ret
@@ -9,8 +14,29 @@ global obdd_node_destroy
 obdd_node_destroy:
 ret
 
+/** implementar en ASM
+obdd* obdd_create(obdd_mgr* mgr, obdd_node* root){
+	obdd* new_obdd		= malloc(sizeof(obdd));
+	new_obdd->mgr		= mgr;
+	new_obdd->root_obdd	= root;
+	return new_obdd;
+}
+**/
 global obdd_create
 obdd_create:
+    push rbp ;A
+    mov rbp, rsp
+    push r15 ;D
+    push r14 ;A
+    mov r15, rdi
+    mov r14, rsi
+    mov rdi, obdd_size
+    call malloc
+    mov [rax+obdd_manager_offset], r15
+    mov [rax+obdd_root_offset], r14
+    pop r14
+    pop r15
+    pop rbp
 ret
 
 global obdd_destroy
@@ -52,5 +78,5 @@ ret
 
 global str_cmp
 str_cmp:
-    
+
 ret
