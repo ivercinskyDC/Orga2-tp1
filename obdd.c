@@ -2,13 +2,17 @@
 #include "assert.h"
 
 uint32_t obdd_mgr_greatest_ID = 0;
-/** DICTIONARY FUNCTIONS **/
-struct dictionary_t* dictionary_create(){
+struct dictionary_t* _dictionary_create(uint32_t size) {
 	struct dictionary_t* new_dict	= malloc(sizeof(struct dictionary_t));
-	new_dict->entries		= malloc(sizeof(dictionary_entry) * INITIAL_DICT_ENTRIES_SIZE);
-	new_dict->max_size		= INITIAL_DICT_ENTRIES_SIZE;
+	new_dict->entries		= malloc(sizeof(dictionary_entry) * size);
+	new_dict->max_size		= size;
 	new_dict->size			= 0;
 	return new_dict;
+}
+
+/** DICTIONARY FUNCTIONS **/
+struct dictionary_t* dictionary_create(){
+	return _dictionary_create(INITIAL_DICT_ENTRIES_SIZE);
 }
 
 void dictionary_destroy(struct dictionary_t* dict){
@@ -20,6 +24,7 @@ void dictionary_destroy(struct dictionary_t* dict){
 	dict->entries	= NULL;
 	dict->size 		= 0;
 	dict->max_size	= 0;
+	free(dict);
 }
 
 bool dictionary_has_key(struct dictionary_t* dict, char* key){
@@ -32,9 +37,26 @@ bool dictionary_has_key(struct dictionary_t* dict, char* key){
 	return false;
 }
 
+struct dictionary_t* copy_dictionatry(struct dictionary_t* old_dict) {
+	struct dictionary_t* new_dict = _dictionary_create(old_dict->max_size*2);
+	for(i = 0; i < old_dict->size; i++){
+	    char *name = old_dict->entries[i].key;
+		dictionary_add_entry(new_dict, name);
+	}
+	dictionary_destroy(old_dict);
+	return new_dict;
+}
 
 uint32_t dictionary_add_entry(struct dictionary_t* dict, char* key){
 	// TODO: implementar funcion
+	if(!dictionary_has_key(dict, key)) {
+		if(dict->max_size == dict->size) {
+			//hay que agrandar el arreglo de entries.
+			dict = copy_dictionatry(dict);
+		}
+		dict->entries[dict->size] = key;
+		dict->size++
+	}
 	return 0;
 }
 
