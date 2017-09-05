@@ -13,7 +13,7 @@ fi
 echo " "
 echo "**Corriendo Valgrind"
 
-valgrind --show-reachable=yes --leak-check=full --error-exitcode=1 ./tester
+valgrind --show-reachable=yes --leak-check=full --error-exitcode=1 -v ./tester
 if [ $? -ne 0 ]; then
   echo "  **Error de memoria"
   exit 1
