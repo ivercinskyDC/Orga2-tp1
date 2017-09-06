@@ -431,7 +431,7 @@ void obdd_print(obdd* root){
 
 void obdd_node_print(obdd_mgr* mgr, obdd_node* root, uint32_t spaces){
 	// TODO: implementar funcion
-	printf("%-*s",spaces,dictionary_key_for_value(mgr->entries,root->varID))
+	printf("%-*s",spaces,dictionary_key_for_value(mgr->vars_dict,root->varID))
 	
 }
 
