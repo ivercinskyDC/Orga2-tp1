@@ -189,7 +189,7 @@ obdd* obdd_create(obdd_mgr* mgr, obdd_node* root){
 }
 **/
 
-/** implementar en ASM
+/** implementar en ASM**/
 void obdd_destroy(obdd* root){
 	if(root->root_obdd != NULL){
 		obdd_node_destroy(root->root_obdd);
@@ -198,7 +198,7 @@ void obdd_destroy(obdd* root){
 	root->mgr			= NULL;
 	free(root);
 }
-**/
+/**/
 
 bool obdd_apply_equals_fkt(bool left, bool right)	{ 	return left == right;	}
 bool obdd_apply_xor_fkt(bool left, bool right)	{	return left ^ right;	}
@@ -415,12 +415,12 @@ obdd_node* obdd_node_restrict(obdd_mgr* mgr, obdd_node* root, char* var, uint32_
 
 obdd* obdd_exists(obdd* root, char* var){ 
 	// TODO: implementar funcion
-	return NULL;
+	return ebdd_apply_or(obdd_restrict(root,var,TRUE_VAR),obdd_restrict(root,var,FALSE_VAR));
 }
 
 obdd* obdd_forall(obdd* root, char* var){ 
 	// TODO: implementar funcion
-	return NULL;
+	return obdd_apply_and(obdd_restrict(root,var,TRUE_VAR), obdd_restrict(root,var,FALSE_VAR));
 }
 
 void obdd_print(obdd* root){
