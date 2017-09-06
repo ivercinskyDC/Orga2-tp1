@@ -48,7 +48,7 @@ struct dictionary_t* copy_dictionatry(struct dictionary_t* old_dict) {
 }
 
 uint32_t dictionary_add_entry(struct dictionary_t* dict, char* key){
-	// TODO: implementar funcion
+
 	if(!dictionary_has_key(dict, key)) {
 		if(dict->max_size == dict->size) {
 			//hay que agrandar el arreglo de entries.
@@ -414,12 +414,12 @@ obdd_node* obdd_node_restrict(obdd_mgr* mgr, obdd_node* root, char* var, uint32_
 }
 
 obdd* obdd_exists(obdd* root, char* var){ 
-	// TODO: implementar funcion
+
 	return obdd_apply_or(obdd_restrict(root,var,true),obdd_restrict(root,var,false));
 }
 
 obdd* obdd_forall(obdd* root, char* var){ 
-	// TODO: implementar funcion
+
 	return obdd_apply_and(obdd_restrict(root,var,true), obdd_restrict(root,var,false));
 }
 
@@ -431,10 +431,11 @@ void obdd_print(obdd* root){
 
 void obdd_node_print(obdd_mgr* mgr, obdd_node* root, uint32_t spaces){
 	// TODO: implementar funcion
+	printf("%-*s",spaces,dictionary_key_for_value(mgr->entries,root->varID))
+	
 }
 
 bool is_true(obdd_mgr* mgr, obdd_node* root){
-	// TODO: implementar funcion
 	assert(mgr != NULL);
 	assert(root != NULL);
 	return mgr->true_obdd->root_obdd->var_ID == root->var_ID;
@@ -445,7 +446,6 @@ bool is_false(obdd_mgr* mgr, obdd_node* root) {
 	return mgr->false_obdd->root_obdd->var_ID == root->var_ID;	
 }
 bool is_constant(obdd_mgr* mgr, obdd_node* root){
-	// TODO: implementar funcion
 	return is_true(mgr, root) || is_false(mgr, root);
 }
 
@@ -471,7 +471,7 @@ bool is_sat(obdd_mgr* mgr, obdd_node* root){
 
 /** OBDD NODE FUNCTIONS **/
 
-/** implementar en ASM
+/** implementar en ASM **/
 void obdd_node_destroy(obdd_node* node){
 	if(node->ref_count == 0){
 		if(node->high_obdd != NULL){
@@ -491,24 +491,6 @@ void obdd_node_destroy(obdd_node* node){
 		free(node);
 	}
 }
-**/
+/**/
 
-/** AUX FUNCTIONS **/
 
-/** implementar en ASM
-uint32_t str_len(char* a) {
-	return 0;
-}
-**/
-
-/** implementar en ASM
-char* str_copy(char* a) {
-	return NULL;
-}
-**/
-
-/** implementar en ASM
-int32_t str_cmp(char* a, char* b) {
-  return 0
-}
-**/
