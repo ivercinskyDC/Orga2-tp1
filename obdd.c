@@ -131,6 +131,10 @@ obdd_mgr*	obdd_mgr_create(){
 
 void obdd_mgr_destroy(obdd_mgr* mgr){
 	// TODO: implementar funcion
+	obdd_destroy(mgr->true_obdd);
+	obdd_destroy(mgr->false_obdd);
+	dictionary_destroy(mgr->vars_dict);
+	free(mgr);
 }
 
 void obdd_mgr_print(obdd_mgr* mgr){
