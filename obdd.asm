@@ -2,7 +2,7 @@ extern free
 extern malloc
 global obdd_node_destroy
 global obdd_create
-global obdd_destroy
+;global obdd_destroy
 global str_len
 global str_copy
 global str_cmp
@@ -44,8 +44,8 @@ obdd_create:
     pop rbp
 ret
 
-obdd_destroy:
-ret
+;obdd_destroy:
+;ret
 
 ;global obdd_node_apply
 ;obdd_node_apply:
