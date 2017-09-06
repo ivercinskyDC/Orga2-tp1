@@ -1,16 +1,22 @@
 extern free
 extern malloc
-
+global obdd_node_destroy
+global obdd_create
+global obdd_destroy
+global str_len
+global str_copy
+global str_cmp
 %define obdd_size 16
 %define obdd_manager_offset 0
 %define obdd_root_offset 8
+
+section .text
 
 
 ;global obdd_mgr_mk_node
 ;obdd_mgr_mk_node:
 ;ret
 
-global obdd_node_destroy
 obdd_node_destroy:
 ret
 
@@ -22,7 +28,6 @@ ret
 ;	return new_obdd;
 ;}
 ;**/
-global obdd_create
 obdd_create:
     push rbp ;A
     mov rbp, rsp
@@ -39,7 +44,6 @@ obdd_create:
     pop rbp
 ret
 
-global obdd_destroy
 obdd_destroy:
 ret
 
@@ -47,15 +51,15 @@ ret
 ;obdd_node_apply:
 ;ret
 
-global is_tautology
-is_tautology:
-ret
+;global is_tautology
+;is_tautology:
+;ret
 
-global is_sat
-is_sat:
-ret
+;global is_sat
+;is_sat:
+;ret
 
-global str_len
+
 ; uint32_t str_len(char *a);
 ; en rdi tenemos el ptr al string
 str_len:
@@ -84,7 +88,7 @@ ret
 ; cal to str_len
 ; malloc de rax
 
-global str_copy
+
 str_copy:
     ;en rdi me llega el ptr a copiar
     push rbp ;A
@@ -115,7 +119,6 @@ str_copy:
         ret
 
 
-global str_cmp
 str_cmp:
     push rbp;
     mov rbp, rsp

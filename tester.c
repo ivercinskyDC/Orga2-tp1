@@ -65,7 +65,6 @@ void casoManager() {
 	obdd* x3_obdd		= obdd_mgr_var(new_mgr, "x3");
 	obdd* x3_obdd_rep	= obdd_mgr_var(new_mgr, "x3");
 	obdd_mgr_print(new_mgr);
-
 	obdd_destroy(x1_obdd);
 	obdd_destroy(x2_obdd);
 	obdd_destroy(x3_obdd);
@@ -76,17 +75,14 @@ void casoManager() {
 void casoObddChico() {
 	printf( "Test obdd chico\n");
 	obdd_mgr* new_mgr	= obdd_mgr_create();
-	//printf( "1\n");
 	//compare x1 & !(x2 | x3) == x1 & !x2 & !x3
 	obdd* x1_obdd		= obdd_mgr_var(new_mgr, "x1");
 	obdd* x2_obdd		= obdd_mgr_var(new_mgr, "x2");
 	obdd* x3_obdd		= obdd_mgr_var(new_mgr, "x3");
-    //printf( "2\n");
+	obdd_mgr_print(new_mgr);
 	obdd* x2_or_x3_obdd	= obdd_apply_or(x2_obdd, x3_obdd);
-	//printf( "3\n");
 	obdd* not_x2_or_x3_obdd	= obdd_apply_not(x2_or_x3_obdd);
 	obdd* eq1_obdd		= obdd_apply_and(x1_obdd, not_x2_or_x3_obdd);
-	printf( "7\n");
 	obdd_print(eq1_obdd);
 
 	obdd* not_x2_obdd	= obdd_apply_not(x2_obdd);

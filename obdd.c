@@ -56,26 +56,28 @@ uint32_t dictionary_add_entry(struct dictionary_t* dict, char* key){
 		}
 
 		struct dictionary_entry_t* entry = malloc(sizeof(struct dictionary_entry_t));
-		//printf( "2AAS\n");
-		entry->key = str_copy(key);
-		//printf( "3\n");
+		
+		entry->key = key;
+		
 		entry->value = dict->size;
 
 		dict->entries[dict->size] = *entry;
 
+		uint32_t sizeAct = dict->size;
+
 		dict->size++;
 
-		return dict->size;
+		return sizeAct;
 
 	}
-	return 0;
+	return dictionary_value_for_key(dict, key);
 }
 
 uint32_t dictionary_value_for_key(struct dictionary_t* dict, char *key){
     uint32_t i = 1;
 	for(i = 0; i < dict->size; i++){
 	    char *name = dict->entries[i].key;
-		if(strcmp(name, key) == 0)
+		if(str_cmp(name, key) == 0)
 			return dict->entries[i].value;
 	}
     return 0;
@@ -114,7 +116,6 @@ obdd_mgr*	obdd_mgr_create(){
 	
 	//create variables dict
 	new_mgr->vars_dict		= dictionary_create();
-	//printf( "1\n");
 	//create constant obdds for true and false values
 	obdd* true_obdd		= malloc(sizeof(obdd));
 	true_obdd->root_obdd= obdd_mgr_mk_node(new_mgr, TRUE_VAR, NULL, NULL);
@@ -151,7 +152,6 @@ uint32_t obdd_mgr_get_next_node_ID(obdd_mgr* mgr){
 /** implementar en ASM**/
 obdd_node* obdd_mgr_mk_node(obdd_mgr* mgr, char* var, obdd_node* high, obdd_node* low){
 	uint32_t var_ID		= dictionary_add_entry(mgr->vars_dict, var);
-	//printf( "3\n");
 	obdd_node* new_node	= malloc(sizeof(obdd_node));
 	new_node->var_ID	= var_ID;
 	new_node->node_ID	= obdd_mgr_get_next_node_ID(mgr);
@@ -316,16 +316,15 @@ void obdd_reduce(obdd* root){
 obdd* obdd_apply(bool (*apply_fkt)(bool,bool), obdd *left, obdd* right){
 	if(left->mgr != right->mgr)
 		return NULL;
-	printf( "4\n");
+	
 	obdd* applied_obdd	= obdd_create(left->mgr, obdd_node_apply(apply_fkt, left->mgr, left->root_obdd, right->root_obdd));
-	printf( "7\n");
+	
 	obdd_reduce(applied_obdd);
 	return applied_obdd;
 }	
 
 /** implementar en ASM **/
 obdd_node* obdd_node_apply(bool (*apply_fkt)(bool,bool), obdd_mgr* mgr, obdd_node* left_node, obdd_node* right_node){
-	printf( "5\n");
 	uint32_t left_var_ID	=  left_node->var_ID;
 	uint32_t right_var_ID	=  right_node->var_ID;
 
@@ -436,14 +435,21 @@ void obdd_node_print(obdd_mgr* mgr, obdd_node* root, uint32_t spaces){
 
 bool is_true(obdd_mgr* mgr, obdd_node* root){
 	// TODO: implementar funcion
-	return false;
+	assert(mgr != NULL);
+	assert(root != NULL);
+	return mgr->true_obdd->root_obdd->var_ID == root->var_ID;
+}
+bool is_false(obdd_mgr* mgr, obdd_node* root) {
+	assert(mgr != NULL);
+	assert(root != NULL);
+	return mgr->false_obdd->root_obdd->var_ID == root->var_ID;	
 }
 bool is_constant(obdd_mgr* mgr, obdd_node* root){
 	// TODO: implementar funcion
-	return false;
+	return is_true(mgr, root) || is_false(mgr, root);
 }
 
-/** implementar en ASM
+/** implementar en ASM**/
 bool is_tautology(obdd_mgr* mgr, obdd_node* root){
 	if(is_constant(mgr, root)){
 		return is_true(mgr, root);
@@ -451,9 +457,9 @@ bool is_tautology(obdd_mgr* mgr, obdd_node* root){
 		return is_tautology(mgr, root->high_obdd) && is_tautology(mgr, root->low_obdd);	
 	}
 }
-**/
+/**/
 
-/** implementar en ASM
+/** implementar en ASM**/
 bool is_sat(obdd_mgr* mgr, obdd_node* root){
 	if(is_constant(mgr, root)){
 		return is_true(mgr, root);
@@ -461,7 +467,7 @@ bool is_sat(obdd_mgr* mgr, obdd_node* root){
 		return is_sat(mgr, root->high_obdd) || is_sat(mgr, root->high_obdd);	
 	}
 }
-**/
+/**/
 
 /** OBDD NODE FUNCTIONS **/
 
