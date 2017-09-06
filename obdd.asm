@@ -1,6 +1,6 @@
 extern free
 extern malloc
-global obdd_node_destroy
+;global obdd_node_destroy
 global obdd_create
 ;global obdd_destroy
 global str_len
@@ -17,8 +17,8 @@ section .text
 ;obdd_mgr_mk_node:
 ;ret
 
-obdd_node_destroy:
-ret
+;obdd_node_destroy:
+;ret
 
 ;/** implementar en ASM
 ;obdd* obdd_create(obdd_mgr* mgr, obdd_node* root){
