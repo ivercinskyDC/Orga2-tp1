@@ -415,12 +415,12 @@ obdd_node* obdd_node_restrict(obdd_mgr* mgr, obdd_node* root, char* var, uint32_
 
 obdd* obdd_exists(obdd* root, char* var){ 
 	// TODO: implementar funcion
-	return obdd_apply_or(obdd_restrict(root,var,TRUE_VAR),obdd_restrict(root,var,FALSE_VAR));
+	return obdd_apply_or(obdd_restrict(root,var,true),obdd_restrict(root,var,false));
 }
 
 obdd* obdd_forall(obdd* root, char* var){ 
 	// TODO: implementar funcion
-	return obdd_apply_and(obdd_restrict(root,var,TRUE_VAR), obdd_restrict(root,var,FALSE_VAR));
+	return obdd_apply_and(obdd_restrict(root,var,true), obdd_restrict(root,var,false));
 }
 
 void obdd_print(obdd* root){
