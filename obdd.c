@@ -57,7 +57,7 @@ uint32_t dictionary_add_entry(struct dictionary_t* dict, char* key){
 
 		struct dictionary_entry_t* entry = malloc(sizeof(struct dictionary_entry_t));
 		
-		entry->key = key;
+		entry->key = str_copy(key);
 		
 		entry->value = dict->size;
 
