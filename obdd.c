@@ -135,6 +135,7 @@ void obdd_mgr_destroy(obdd_mgr* mgr){
 	obdd_destroy(mgr->false_obdd);
 	dictionary_destroy(mgr->vars_dict);
 	free(mgr);
+	mgr = NULL;
 }
 
 void obdd_mgr_print(obdd_mgr* mgr){
