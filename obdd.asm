@@ -147,9 +147,9 @@ str_cmp:
         mov cl, [rsi]
         cmp dl, cl
         jne .seguir
-        cmp dl, r13b
+        cmp dl, 0
         je .seguir
-        cmp cl, r12b
+        cmp cl, 0
         je .seguir
         inc rdi
         inc rsi

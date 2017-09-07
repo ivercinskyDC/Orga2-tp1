@@ -52,16 +52,19 @@ uint32_t dictionary_add_entry(struct dictionary_t* dict, char* key){
 	if(!dictionary_has_key(dict, key)) {
 		if(dict->max_size == dict->size) {
 			//hay que agrandar el arreglo de entries.
-			dict = copy_dictionatry(dict);
+			struct dictionary_t* new_dict = copy_dictionatry(dict);
+			free(dict);
+			dict = new_dict;
 		}
 
-		struct dictionary_entry_t* entry = malloc(sizeof(struct dictionary_entry_t));
+		//struct dictionary_entry_t* entry = malloc(sizeof(struct dictionary_entry_t));
 		
-		entry->key = str_copy(key);
+		//entry->key = str_copy(key);
 		
-		entry->value = dict->size;
+		//entry->value = dict->size;
 
-		dict->entries[dict->size] = *entry;
+		dict->entries[dict->size].key = str_copy(key);
+		dict->entries[dict->size].value = dict->size;
 
 		uint32_t sizeAct = dict->size;
 
