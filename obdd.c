@@ -37,7 +37,8 @@ bool dictionary_has_key(struct dictionary_t* dict, char* key){
 	return false;
 }
 
-struct dictionary_t* copy_dictionatry(struct dictionary_t* old_dict) {
+struct dictionary_t* copy_dictionary(struct dictionary_t* old_dict) {
+	//copiar el array de entry
 	struct dictionary_t* new_dict = _dictionary_create(old_dict->max_size*2);
 	for(uint32_t i = 0; i < old_dict->size; i++){
 	    char *name = old_dict->entries[i].key;
@@ -49,32 +50,30 @@ struct dictionary_t* copy_dictionatry(struct dictionary_t* old_dict) {
 
 uint32_t dictionary_add_entry(struct dictionary_t* dict, char* key){
 
-	if(!dictionary_has_key(dict, key)) {
-		if(dict->max_size == dict->size) {
-			//hay que agrandar el arreglo de entries.
-			struct dictionary_t* new_dict = copy_dictionatry(dict);
-			free(dict);
-			dict = new_dict;
-		}
-
-		//struct dictionary_entry_t* entry = malloc(sizeof(struct dictionary_entry_t));
-		
-		//entry->key = str_copy(key);
-		
-		//entry->value = dict->size;
-
-		dict->entries[dict->size].key = str_copy(key);
-		dict->entries[dict->size].value = dict->size;
-
-		uint32_t sizeAct = dict->size;
-
-		dict->size++;
-
-		return sizeAct;
-
+	if(dictionary_has_key(dict, key)) {
+		return dictionary_value_for_key(dict, key);
 	}
-	return dictionary_value_for_key(dict, key);
-}
+
+	if(dict->max_size == dict->size) {
+		//hay que agrandar el arreglo de entries.
+		struct dictionary_t* new_dict = copy_dictionary(dict);
+		free(dict);
+		dict = new_dict;
+	}
+
+	//struct dictionary_entry_t* entry = malloc(sizeof(struct dictionary_entry_t));
+	
+	//entry->key = str_copy(key);
+	
+	//entry->value = dict->size;
+
+	dict->entries[dict->size].key = str_copy(key);
+	dict->entries[dict->size].value = dict->size;
+
+	return dict->size++;
+
+}	
+
 
 uint32_t dictionary_value_for_key(struct dictionary_t* dict, char *key){
     uint32_t i = 1;
@@ -432,16 +431,68 @@ obdd* obdd_forall(obdd* root, char* var){
 }
 
 void obdd_print(obdd* root){
-	printf("[OBDD]\nMgr_ID:%d\nValue:", root->mgr->ID);
+	printf("[OBDD]\nMgr_ID:%d\nValue:\n", root->mgr->ID);
 	obdd_node_print(root->mgr, root->root_obdd, 0);
 	printf("\n");
 }
 
+
+void obdd_node_printf(obdd_mgr* mgr, obdd_node* root, uint32_t spaces){
+	uint32_t i = 0;
+	for(i = 0; i<spaces; i++) {
+		printf(" ");
+	}
+	printf("%s",dictionary_key_for_value(mgr->vars_dict,root->var_ID));
+	
+	if(is_constant(mgr, root)) {
+		if (is_true(mgr, root)) {
+			printf(" -> 1\n");
+		} else {
+			printf(" -> 0\n");
+		}
+	} else {		
+		printf(" &\n");
+	}
+}
+
 void obdd_node_print(obdd_mgr* mgr, obdd_node* root, uint32_t spaces){
 	// TODO: implementar funcion
-	// sprintf("\n%*s",spaces,dictionary_key_for_value(mgr->vars_dict,root->var_ID));
+	uint32_t i = 0;
+	for(i = 0; i<spaces; i++) {
+		printf(" ");
+	}
+	printf("%s",dictionary_key_for_value(mgr->vars_dict,root->var_ID));
+	if(is_constant(mgr, root->high_obdd)) {
+		if (is_true(mgr, root->high_obdd)) {
+			printf("->1\n");
+		} else {
+			printf("->0\n");
+		}
+		return;
+	} else {
+		printf(" &\n");
+		obdd_node_print(mgr, root->high_obdd, ++spaces);
+		for(i = 0; i<spaces; i++) {
+			printf(" ");
+		}
+		printf("|\n");
+		printf("(!%s)",dictionary_key_for_value(mgr->vars_dict,root->var_ID));
+		if(is_constant(mgr, root->low_obdd)) {
+			if (is_true(mgr, root->low_obdd)) {
+				printf("->1\n");
+			} else {
+				printf("->0\n");
+			}
+			return;
+		} else {
+			printf(" &\n");
+			obdd_node_print(mgr, root->low_obdd, ++spaces);
+		}
+	}
 	
+	//obdd_node_print(mgr, root->low_obdd, ++spaces);
 }
+
 
 bool is_true(obdd_mgr* mgr, obdd_node* root){
 	assert(mgr != NULL);
