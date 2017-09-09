@@ -468,28 +468,27 @@ void obdd_node_print(obdd_mgr* mgr, obdd_node* root, uint32_t spaces){
 		} else {
 			printf("->0\n");
 		}
-		return;
 	} else {
 		printf(" &\n");
 		obdd_node_print(mgr, root->high_obdd, ++spaces);
-		for(i = 0; i<spaces; i++) {
-			printf(" ");
-		}
-		printf("|\n");
-		printf("(!%s)",dictionary_key_for_value(mgr->vars_dict,root->var_ID));
-		if(is_constant(mgr, root->low_obdd)) {
-			if (is_true(mgr, root->low_obdd)) {
-				printf("->1\n");
-			} else {
-				printf("->0\n");
-			}
-			return;
-		} else {
-			printf(" &\n");
-			obdd_node_print(mgr, root->low_obdd, ++spaces);
-		}
+		
 	}
-	
+	printf("\n");
+	for(i = 0; i<spaces; i++) {
+		printf(" ");
+	}
+	printf("(!%s)",dictionary_key_for_value(mgr->vars_dict,root->var_ID));
+	if(is_constant(mgr, root->low_obdd)) {
+		if (is_true(mgr, root->low_obdd)) {
+			printf("->1\n");
+		} else {
+			printf("->0\n");
+		}
+	} else {
+		printf("\n");
+		obdd_node_print(mgr, root->low_obdd, ++spaces);
+	}
+	printf("|\n");
 	//obdd_node_print(mgr, root->low_obdd, ++spaces);
 }
 
