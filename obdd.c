@@ -156,7 +156,7 @@ uint32_t obdd_mgr_get_next_node_ID(obdd_mgr* mgr){
 	return previous_ID;
 }
 
-/** implementar en ASM**/
+/* implementar en ASM
 obdd_node* obdd_mgr_mk_node(obdd_mgr* mgr, char* var, obdd_node* high, obdd_node* low){
 	uint32_t var_ID		= dictionary_add_entry(mgr->vars_dict, var);
 	obdd_node* new_node	= malloc(sizeof(obdd_node));
@@ -171,7 +171,7 @@ obdd_node* obdd_mgr_mk_node(obdd_mgr* mgr, char* var, obdd_node* high, obdd_node
 	new_node->ref_count	= 0;
 	return new_node;
 }
-/**/
+*/
 
 obdd* obdd_mgr_var(obdd_mgr* mgr, char* name){
 	obdd* var_obdd	= malloc(sizeof(obdd));
@@ -196,7 +196,7 @@ obdd* obdd_create(obdd_mgr* mgr, obdd_node* root){
 }
 **/
 
-/** implementar en ASM**/
+/** implementar en ASM
 void obdd_destroy(obdd* root){
 	if(root->root_obdd != NULL){
 		obdd_node_destroy(root->root_obdd);
@@ -205,7 +205,7 @@ void obdd_destroy(obdd* root){
 	root->mgr			= NULL;
 	free(root);
 }
-/**/
+**/
 
 bool obdd_apply_equals_fkt(bool left, bool right)	{ 	return left == right;	}
 bool obdd_apply_xor_fkt(bool left, bool right)	{	return left ^ right;	}

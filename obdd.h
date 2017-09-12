@@ -30,21 +30,21 @@ struct dictionary_t{
 
 
 typedef struct obdd_mgr_t {
-	uint32_t		ID;
-	uint32_t		greatest_node_ID;
-	uint32_t		greatest_var_ID;
-	struct obdd_t*			true_obdd;
-	struct obdd_t*			false_obdd;
-	struct dictionary_t*		vars_dict;
+	uint32_t		ID; //0 4
+	uint32_t		greatest_node_ID; //4 4
+	uint32_t		greatest_var_ID; //8 4
+	struct obdd_t*			true_obdd;//12 8
+	struct obdd_t*			false_obdd;//20 8
+	struct dictionary_t*		vars_dict;//28 8
 } __attribute__((__packed__)) obdd_mgr;
 
 typedef struct obdd_node_t{
-	uint32_t 		var_ID;
-	uint32_t		node_ID;
-	uint32_t		ref_count;
-	struct obdd_node_t*	high_obdd;
-	struct obdd_node_t*	low_obdd;
-} __attribute__((__packed__)) obdd_node;
+	uint32_t 		var_ID;  // 0 4
+	uint32_t		node_ID; // 4 4
+	uint32_t		ref_count; // 8 4
+	struct obdd_node_t*	high_obdd; // 12 8
+	struct obdd_node_t*	low_obdd; //20 8
+} __attribute__((__packed__)) obdd_node; // 28
 
 typedef struct obdd_t{
 	struct obdd_mgr_t*	mgr;
