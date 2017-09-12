@@ -23,6 +23,8 @@ global str_cmp
 extern obdd_node_destroy ; hay que borrarlo dsp
 extern dictionary_add_entry
 extern obdd_mgr_get_next_node_ID
+extern is_constant
+extern is_true
 section .text
 
 
@@ -146,9 +148,27 @@ obdd_destroy:
 ;obdd_node_apply:
 ;ret
 
-;global is_tautology
-;is_tautology:
-;ret
+;bool is_tautology(obdd_mgr* mgr, obdd_node* root){
+	;if(is_constant(mgr, root)){
+	;	return is_true(mgr, root);
+	;}else{
+	;	return is_tautology(mgr, root->high_obdd) && is_tautology(mgr, root->low_obdd);	
+	;}
+;}
+global is_tautology
+is_tautology:
+    .begin:
+    call is_constant
+    cmp rax, 0
+    je .isConstant
+    .isNotConstant:
+        mov rsi, [rsi+obdd_node_high_offset]
+        call 
+    .isConstant:
+        call is_true
+        jmp .fin
+    .fin:
+        ret
 
 ;global is_sat
 ;is_sat:
