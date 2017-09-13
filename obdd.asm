@@ -1,5 +1,3 @@
-section .data
-
 %define NULL 0
 %define obdd_size 16
 %define obdd_manager_offset 0
@@ -14,9 +12,16 @@ section .data
 extern free
 extern malloc
 extern dictionary_add_entry
+extern dictionary_key_for_value
 extern obdd_mgr_get_next_node_ID
 extern is_constant
 extern is_true
+
+
+section .data
+    true_var: db '1',0
+    false_var: db '0',0
+
 
 
 section .text
@@ -188,9 +193,174 @@ obdd_destroy:
         pop rbp
         ret
 
-;global obdd_node_apply
-;obdd_node_apply:
-;ret
+;rdi funcion to aply
+;rsi mgr
+;rdx left_node
+;rcx right_node
+
+global obdd_node_apply
+obdd_node_apply:
+    push rbp
+    mov rbp, rsp
+    push r15
+    push r14
+    push r13
+    push r12
+    push rbx
+    sub rsp, 8
+
+    mov r15, rdi ;apply_fkt
+    mov r14, rsi ;mgr
+    mov r13, rdx ;left_node
+    mov r12, rcx ;right_node
+
+    mov rdi, [r14+obdd_mgr_vars_dict_offset]
+    mov esi, [r13+obdd_node_varId_offset]
+    call dictionary_key_for_value
+    push rax ;left
+    sub rsp, 8
+    mov rdi, [r14+obdd_mgr_vars_dict_offset]
+    mov esi, [r12+obdd_node_varId_offset]
+    call dictionary_key_for_value
+    push rax ;right
+    sub rsp, 8
+
+    mov rdi,r14
+    mov rsi,r13 ;left
+    call is_constant
+    push rax
+    sub rsp, 8
+    mov rdi,r14
+    mov rsi,r12 ;right
+    call is_constant 
+    push rax
+
+    pop r8; is_right_constant
+    add rsp, 8
+    pop r9; is_left_constant
+    add rsp, 8
+    pop r10; right_var
+    add rsp, 8
+    pop r11; left_var
+
+    cmp r8, r9
+    je .both_left_right_constant
+
+    cmp r9, 1
+    je .is_left_constant
+
+    cmp r8, 1
+    je .is_right_constant
+
+    mov r8d, [r13+obdd_node_varId_offset]
+    mov r9d, [r12+obdd_node_varId_offset]
+    cmp r8d, r9d
+    je .left_equals_right
+    jg .is_right_constant
+    jl .is_left_constant 
+    jmp .fin
+
+    .both_left_right_constant:
+        mov rdi, r14
+        mov rsi, r13
+        call is_true
+        push rax
+        sub rsp, 8
+        mov rdi, r14
+        mov rsi, r12
+        call is_true
+        add rsp, 8 
+        pop rdi
+        mov rsi, rax
+        call r15
+
+        cmp rax, 0
+        je .wasTrue
+        mov rdi, r14
+        mov rsi, false_var
+        mov rdx, NULL
+        mov rcx, NULL
+        call obdd_mgr_mk_node
+        jmp .fin
+
+        .wasTrue:
+            mov rdi, r14
+            mov rsi, true_var
+            mov rdx, NULL
+            mov rcx, NULL
+            call obdd_mgr_mk_node
+
+        jmp .fin
+    .is_left_constant:
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, r13
+        mov rcx, [r12+obdd_node_high_offset]
+        call obdd_node_apply
+        push rax
+        sub rsp, 8
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, r13
+        mov rcx, [r12+obdd_node_low_offset]
+        call obdd_node_apply
+        mov rdi, r14
+        mov rsi, r10
+        add rsp, 8
+        pop rdx
+        mov rcx, rax
+        call obdd_mgr_mk_node
+        jmp .fin
+    .is_right_constant:
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, [r13+obdd_node_high_offset]
+        mov rcx, r12
+        call obdd_node_apply
+        push rax
+        sub rsp, 8
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, [r13+obdd_node_low_offset]
+        mov rcx, r12
+        call obdd_node_apply
+        mov rdi, r14
+        mov rsi, r11
+        add rsp, 8
+        pop rdx
+        mov rcx, rax
+        call obdd_mgr_mk_node
+        jmp .fin
+    .left_equals_right:
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, [r13+obdd_node_high_offset]
+        mov rcx, [r12+obdd_node_high_offset]
+        call obdd_node_apply
+        push rax
+        sub rsp, 8
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, [r13+obdd_node_low_offset]
+        mov rcx, [r13+obdd_node_low_offset]
+        call obdd_node_apply
+        mov rdi, r14
+        mov rsi, r11
+        add rsp,8
+        pop rdx
+        mov rcx, rax
+        call obdd_mgr_mk_node
+        jmp .fin
+    
+    .fin:
+        add rsp, 8
+        pop rbx
+        pop r12
+        pop r13
+        pop r14
+        pop r15
+        pop rbp
+        ret
 
 
 global is_tautology
