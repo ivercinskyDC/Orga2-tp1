@@ -1,26 +1,18 @@
-extern free
-extern malloc
-;global obdd_node_destroy
+section .data
 
-;global obdd_destroy
-global str_len
-global str_copy
-global str_cmp
 %define NULL 0
-
 %define obdd_size 16
 %define obdd_manager_offset 0
 %define obdd_root_offset 8
-
 %define obdd_node_size 28
 %define obdd_node_varId_offset 0
 %define obdd_node_nodeId_offset 4
 %define obdd_node_ref_count_offset 8
 %define obdd_node_high_offset 12
 %define obdd_node_low_offset 20
-
 %define obdd_mgr_vars_dict_offset 28
-extern obdd_node_destroy ; hay que borrarlo dsp
+extern free
+extern malloc
 extern dictionary_add_entry
 extern obdd_mgr_get_next_node_ID
 extern is_constant
@@ -104,8 +96,58 @@ obdd_mgr_mk_node:
         pop rbp
         ret
 
-;obdd_node_destroy:
-;ret
+global obdd_node_destroy
+obdd_node_destroy:
+    push rbp
+    mov rbp, rsp
+    push r15
+    push r14
+    push r13
+    push r12
+    push rbx
+    sub rsp, 8
+
+    mov r15, rdi
+
+    cmp dword [r15+obdd_node_ref_count_offset], 0
+    jne .fin
+
+    cmp qword [r15+obdd_node_high_offset], NULL
+    jne .borrarHigh
+    .dspDeHigh:
+    cmp qword [r15+obdd_node_low_offset], NULL
+    jne .borrarLow
+    
+    jmp .seguir
+
+    .borrarHigh:
+        mov rdi, [r15+obdd_node_high_offset]
+        mov qword [r15+obdd_node_high_offset], NULL
+        dec dword [rdi+obdd_node_ref_count_offset]
+        call obdd_node_destroy
+        jmp .dspDeHigh
+        
+    .borrarLow:
+        mov rdi, [r15+obdd_node_low_offset]
+        mov qword [r15+obdd_node_low_offset], NULL
+        dec dword [rdi+obdd_node_ref_count_offset]
+        call obdd_node_destroy
+
+    .seguir:
+        mov dword [r15+obdd_node_varId_offset], 0
+        mov dword [r15+obdd_node_nodeId_offset], 0
+        mov rdi, r15
+        call free
+
+    .fin:
+        add rsp, 8
+        pop rbx
+        pop r12
+        pop r13
+        pop r14
+        pop r15
+        pop rbp
+        ret
 
 global obdd_create
 obdd_create:
@@ -232,6 +274,7 @@ is_sat:
 
 ; uint32_t str_len(char *a);
 ; en rdi tenemos el ptr al string
+global str_len
 str_len:
     ;en rdi me llega el ptr al string
     ;tengo que loopear hasta llegar al cero
@@ -253,12 +296,7 @@ str_len:
 
 ret
 
-;en rdi recibo el string a copiar
-;pasos
-; cal to str_len
-; malloc de rax
-
-
+global str_copy
 str_copy:
     ;en rdi me llega el ptr a copiar
     push rbp ;A
@@ -288,7 +326,7 @@ str_copy:
         pop rbp
         ret
 
-
+global str_cmp
 str_cmp:
     push rbp;
     mov rbp, rsp

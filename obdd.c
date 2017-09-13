@@ -515,7 +515,7 @@ bool is_sat(obdd_mgr* mgr, obdd_node* root){
 
 /** OBDD NODE FUNCTIONS **/
 
-/** implementar en ASM **/
+/* implementar en ASM 
 void obdd_node_destroy(obdd_node* node){
 	if(node->ref_count == 0){
 		if(node->high_obdd != NULL){
@@ -535,6 +535,6 @@ void obdd_node_destroy(obdd_node* node){
 		free(node);
 	}
 }
-/**/
+*/
 
 
