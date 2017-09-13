@@ -25,6 +25,8 @@ extern dictionary_add_entry
 extern obdd_mgr_get_next_node_ID
 extern is_constant
 extern is_true
+
+
 section .text
 
 
@@ -148,31 +150,84 @@ obdd_destroy:
 ;obdd_node_apply:
 ;ret
 
-;bool is_tautology(obdd_mgr* mgr, obdd_node* root){
-	;if(is_constant(mgr, root)){
-	;	return is_true(mgr, root);
-	;}else{
-	;	return is_tautology(mgr, root->high_obdd) && is_tautology(mgr, root->low_obdd);	
-	;}
-;}
+
 global is_tautology
 is_tautology:
-    .begin:
+    push rbp
+    mov rbp, rsp
+    push r15
+    push r14
+    push r13
+    push r12
+    push rbx
+    sub rsp, 8
+    mov r15, rdi ;backup
+    mov r14, rsi ;backup
     call is_constant
     cmp rax, 0
-    je .isConstant
-    .isNotConstant:
-        mov rsi, [rsi+obdd_node_high_offset]
-        call 
-    .isConstant:
+    jne .seguir
+    mov rdi, r15
+    mov rsi, [r14+obdd_node_high_offset]
+    call is_tautology
+    mov r13, rax
+    mov rdi, r15
+    mov rsi, [r14+obdd_node_low_offset]
+    call is_tautology
+    add rax, r13
+    jmp .fin
+
+    .seguir:
+        mov rdi, r15
+        mov rsi, r14
         call is_true
-        jmp .fin
     .fin:
+        add rsp, 8
+        pop rbx
+        pop r12
+        pop r13
+        pop r14
+        pop r15
+        pop rbp
         ret
 
-;global is_sat
-;is_sat:
-;ret
+global is_sat
+is_sat:
+    push rbp
+    mov rbp, rsp
+    push r15
+    push r14
+    push r13
+    push r12
+    push rbx
+    sub rsp, 8
+    mov r15, rdi ;backup
+    mov r14, rsi ;backup
+    call is_constant
+    cmp rax, 0
+    jne .seguir
+    mov rdi, r15
+    mov rsi, [r14+obdd_node_high_offset]
+    call is_sat
+    mov r13, rax
+    mov rdi, r15
+    mov rsi, [r14+obdd_node_low_offset]
+    call is_sat
+    or rax, r13
+    jmp .fin
+
+    .seguir:
+        mov rdi, r15
+        mov rsi, r14
+        call is_true
+    .fin:
+        add rsp, 8
+        pop rbx
+        pop r12
+        pop r13
+        pop r14
+        pop r15
+        pop rbp
+        ret
 
 
 ; uint32_t str_len(char *a);

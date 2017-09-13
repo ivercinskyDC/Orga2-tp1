@@ -493,7 +493,7 @@ bool is_constant(obdd_mgr* mgr, obdd_node* root){
 	return is_true(mgr, root) || is_false(mgr, root);
 }
 
-/** implementar en ASM**/
+/** implementar en ASM
 bool is_tautology(obdd_mgr* mgr, obdd_node* root){
 	if(is_constant(mgr, root)){
 		return is_true(mgr, root);
@@ -501,9 +501,9 @@ bool is_tautology(obdd_mgr* mgr, obdd_node* root){
 		return is_tautology(mgr, root->high_obdd) && is_tautology(mgr, root->low_obdd);	
 	}
 }
-/**/
+**/
 
-/** implementar en ASM**/
+/** implementar en ASM*
 bool is_sat(obdd_mgr* mgr, obdd_node* root){
 	if(is_constant(mgr, root)){
 		return is_true(mgr, root);
@@ -511,7 +511,7 @@ bool is_sat(obdd_mgr* mgr, obdd_node* root){
 		return is_sat(mgr, root->high_obdd) || is_sat(mgr, root->high_obdd);	
 	}
 }
-/**/
+*/
 
 /** OBDD NODE FUNCTIONS **/
 
