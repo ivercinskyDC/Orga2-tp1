@@ -1,0 +1,2 @@
+tester: obdd.c:484: is_true: Assertion `root != ((void *)0)' failed.
+tester: obdd.c:484: is_true: Assertion `root != ((void *)0)' failed.

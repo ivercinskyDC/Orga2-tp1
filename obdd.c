@@ -330,7 +330,7 @@ obdd* obdd_apply(bool (*apply_fkt)(bool,bool), obdd *left, obdd* right){
 	return applied_obdd;
 }	
 
-/** implementar en ASM 
+/** implementar en ASM **/
 obdd_node* obdd_node_apply(bool (*apply_fkt)(bool,bool), obdd_mgr* mgr, obdd_node* left_node, obdd_node* right_node){
 	uint32_t left_var_ID	=  left_node->var_ID;
 	uint32_t right_var_ID	=  right_node->var_ID;
@@ -375,7 +375,7 @@ obdd_node* obdd_node_apply(bool (*apply_fkt)(bool,bool), obdd_mgr* mgr, obdd_nod
 
 	return applied_node;	
 }
-**/
+/**/
 
 obdd* obdd_restrict(obdd* root, char* var, bool value){
 	uint32_t var_ID	=  dictionary_value_for_key(root->mgr->vars_dict, var);

@@ -23,11 +23,16 @@ section .data
     false_var: db '0',0
 
 
+global obdd_mgr_mk_node
+global obdd_node_destroy
+global obdd_create
+global obdd_destroy
+;global obdd_node_apply
 
 section .text
 
 
-global obdd_mgr_mk_node
+
 obdd_mgr_mk_node:
     push rbp ;A
     mov rbp, rsp
@@ -101,7 +106,7 @@ obdd_mgr_mk_node:
         pop rbp
         ret
 
-global obdd_node_destroy
+
 obdd_node_destroy:
     push rbp
     mov rbp, rsp
@@ -154,7 +159,6 @@ obdd_node_destroy:
         pop rbp
         ret
 
-global obdd_create
 obdd_create:
     push rbp ;A
     mov rbp, rsp
@@ -171,7 +175,7 @@ obdd_create:
     pop rbp
 ret
 
-global obdd_destroy
+
 obdd_destroy:
     push rbp
     mov rbp, rsp
@@ -198,7 +202,7 @@ obdd_destroy:
 ;rdx left_node
 ;rcx right_node
 
-global obdd_node_apply
+
 obdd_node_apply:
     push rbp
     mov rbp, rsp
@@ -243,21 +247,18 @@ obdd_node_apply:
     add rsp, 8
     pop r11; left_var
 
-    cmp r8, r9
-    je .both_left_right_constant
-
-    cmp r9, 1
+    
+    cmp r9, 0
     je .is_left_constant
-
-    cmp r8, 1
+    cmp r8, 0
     je .is_right_constant
 
     mov r8d, [r13+obdd_node_varId_offset]
     mov r9d, [r12+obdd_node_varId_offset]
     cmp r8d, r9d
     je .left_equals_right
-    jg .is_right_constant
-    jl .is_left_constant 
+    jg .is_right_constantd
+    jl .is_left_constantd
     jmp .fin
 
     .both_left_right_constant:
@@ -292,6 +293,9 @@ obdd_node_apply:
 
         jmp .fin
     .is_left_constant:
+        cmp r8, 0
+        je .both_left_right_constant
+    .is_left_constantd:
         mov rdi, r15
         mov rsi, r14
         mov rdx, r13
@@ -312,6 +316,9 @@ obdd_node_apply:
         call obdd_mgr_mk_node
         jmp .fin
     .is_right_constant:
+        cmp r9, 0
+        je .both_left_right_constant
+    .is_right_constantd:
         mov rdi, r15
         mov rsi, r14
         mov rdx, [r13+obdd_node_high_offset]
