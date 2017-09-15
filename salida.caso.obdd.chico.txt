@@ -2,6 +2,12 @@ Test obdd chico
 [OBDD]
 Mgr_ID:2
 Value:
-0->1
+x1 &
+ x2->0
+ |
+ (!x2) &
+  x3->0
+  |
+  (!x3)->1
 |
-(!0)->1
+(!x1)->0
