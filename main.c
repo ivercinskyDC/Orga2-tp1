@@ -28,7 +28,8 @@ void run_tests(){
 	obdd* not_x1_or_not_x2 = obdd_apply_or(not_x1_obdd, not_x2_obdd);
 	obdd* not_x1_or_not_x2_or_x1 = obdd_apply_or(not_x1_or_not_x2, x1_obdd);
 
-	obdd* exists_x2_such = obdd_exists
+	obdd* exists_x2_such = obdd_exists(x1_and_not_x1_obdd, "x2");
+	obdd_print(exists_x2_such);
 
 	
 

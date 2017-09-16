@@ -22,3 +22,9 @@ Value:
 x1->0
 |
 (!x1)->0
+[OBDD]
+Mgr_ID:1
+Value:
+x1->0
+|
+(!x1)->0
