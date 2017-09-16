@@ -217,157 +217,175 @@ obdd_node_apply:
     mov r14, rsi ;mgr
     mov r13, rdx ;left_node
     mov r12, rcx ;right_node
-
-    mov rdi, [r14+obdd_mgr_vars_dict_offset] ; mgr->vars_dict
-    mov esi, [r13+obdd_node_varId_offset] ; left->var_ID
-    call dictionary_key_for_value 
-    push rax ;left_var ;D
-    sub rsp, 8 ;A
-    mov rdi, [r14+obdd_mgr_vars_dict_offset] ; mgr->vars_dict
-    mov esi, [r12+obdd_node_varId_offset] ;right->var_ID
-    call dictionary_key_for_value
-    push rax ;right_var ;D
-    sub rsp, 8 ;A
-
-    mov rdi,r14 ;mgr
-    mov rsi,r13 ;left
+    xor rbx, rbx
+    ;CHECK R13 is_constant
+    .tester:
+    mov rdi, r14
+    mov rsi, r13
     call is_constant
-    push ax; is_left_constant ;D
-    sub rsp, 8 ;A
-    mov rdi,r14  ;mgr
-    mov rsi,r12 ;right
-    call is_constant 
-    push ax; is_right_constant ;D
-    xor r8,r8
-    xor r9,r9
-    pop r8w; is_right_constant ;A
-    add rsp, 8
-    pop r9w; is_left_constant
-    add rsp, 8
-    ;pop r10; right_var
-    ;add rsp, 8
-    ;pop r11; left_var
-
+    mov bl, al
+    ;CHECK r12 is_constant
+    mov rdi, r14
+    mov rsi, r12
+    call is_constant
     
-    cmp r9w, 0
-    je .is_left_constant
-    cmp r8w, 0
-    je .is_right_constant
+    ;en al tengo si r12 es is_constant
+    ;en bl tengo si r13 es is_constant
+    
+    cmp al, 1
+    je .right_node_is_contant
+    cmp bl, 1
+    je .left_node_is_contant
+    jmp .checkForVarId 
 
-    mov r8d, [r13+obdd_node_varId_offset] ;left_node_var_id
-    mov r9d, [r12+obdd_node_varId_offset] ;right_node_var_id
-    cmp r8d, r9d
-    je .left_equals_right
-    jg .is_right_constantd
-    jl .is_left_constantd
-    jmp .fin
+    .right_node_is_contant:
+        cmp bl, 1
+        je .both_constants
+    .left_bigger:
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, [r13+obdd_node_high_offset]
+        mov rcx, r12
+        call obdd_node_apply
+        mov rbx, rax
 
-    .both_left_right_constant:
-        mov rdi, r14
-        mov rsi, r13
-        call is_true
+        mov rdi, r15
+        mov rsi, r14
+        mov rdx, [r13+obdd_node_low_offset]
+        mov rcx, r12
+        call obdd_node_apply
         push rax
         sub rsp, 8
+
+        mov rdi, [r14+obdd_mgr_vars_dict_offset]
+        mov esi, [r13+obdd_node_varId_offset]
+        call dictionary_key_for_value
+        mov r8, rax
+        add rsp, 8
+        pop rax
+
         mov rdi, r14
-        mov rsi, r12
-        call is_true
-        add rsp, 8 
-        pop rdi
-        mov rsi, rax
-        call r15
+        mov rsi, r8
+        mov rdx, rbx
+        mov rcx, rax
+        jmp .callMakeNode
 
-        cmp rax, 0
-        je .wasTrue
-        mov rdi, r14
-        mov rsi, false_var
-        mov rdx, NULL
-        mov rcx, NULL
-        call obdd_mgr_mk_node
-        jmp .fin
 
-        .wasTrue:
-            mov rdi, r14
-            mov rsi, true_var
-            mov rdx, NULL
-            mov rcx, NULL
-            call obdd_mgr_mk_node
-
-        jmp .fin
-    .is_left_constant:
-        cmp r8, 0
-        je .both_left_right_constant
-    .is_left_constantd:
+    .left_node_is_contant:
+        cmp al, 1
+        je .both_constants
+    .right_bigger:
         mov rdi, r15
         mov rsi, r14
         mov rdx, r13
         mov rcx, [r12+obdd_node_high_offset]
         call obdd_node_apply
-        push rax
-        sub rsp, 8
+        mov rbx, rax
+
         mov rdi, r15
         mov rsi, r14
         mov rdx, r13
         mov rcx, [r12+obdd_node_low_offset]
         call obdd_node_apply
-        mov rdi, r14
-        add rsp, 8
-        pop rdx
-        mov rcx, rax
-        pop rdi
-        add rsp,8
-        mov rsi, r10
-        call obdd_mgr_mk_node
-        jmp .fin
-    .is_right_constant:
-        cmp r9, 0
-        je .both_left_right_constant
-    .is_right_constantd:
-        mov rdi, r15
-        mov rsi, r14
-        mov rdx, [r13+obdd_node_high_offset]
-        mov rcx, r12
-        call obdd_node_apply
         push rax
         sub rsp, 8
-        mov rdi, r15
-        mov rsi, r14
-        mov rdx, [r13+obdd_node_low_offset]
-        mov rcx, r12
-        call obdd_node_apply
-        mov rdi, r14
+
+        mov rdi, [r14+obdd_mgr_vars_dict_offset]
+        mov esi, [r12+obdd_node_varId_offset]
+        call dictionary_key_for_value
+        mov r8, rax
         add rsp, 8
-        pop rdx
+        pop rax
+
+        mov rdi, r14
+        mov rsi, r8
+        mov rdx, rbx
         mov rcx, rax
-        pop r10
-        add rsp,8
-        pop r11
-        mov rsi, r11
-        call obdd_mgr_mk_node
-        jmp .fin
-    .left_equals_right:
+        jmp .callMakeNode
+      
+    .both_constants:
+        ;calc is_true(mgr, left_node)
+        mov rdi, r14
+        mov rsi, r13
+        xor rbx, rbx
+        xor rax, rax
+        call is_true
+        mov bx, ax
+
+        mov rdi, r14
+        mov rsi, r12
+        
+        call is_true
+        xor rdi, rdi
+        xor rsi, rsi
+        mov di, bx
+        mov si, ax
+
+        call r15
+        .resp15:
+        cmp ax, 1
+        je .isTrue
+        .isFalse:
+        mov rdi, r14
+        mov rsi, false_var
+        mov rdx, NULL
+        mov rcx, NULL
+        jmp .callMakeNode
+        .isTrue:
+            mov rdi, r14
+            mov rsi, true_var
+            mov rdx, NULL
+            mov rcx, NULL
+        
+    .callMakeNode:
+            call obdd_mgr_mk_node
+            jmp .fin
+
+
+    .checkForVarId:
+        mov r9w, [r12+obdd_node_varId_offset]
+        cmp word [r13+obdd_node_varId_offset], r9w
+        je .sameVarId
+        jl .leftSmall
+        jmp .leftBig
+
+    .sameVarId:
         mov rdi, r15
         mov rsi, r14
         mov rdx, [r13+obdd_node_high_offset]
         mov rcx, [r12+obdd_node_high_offset]
         call obdd_node_apply
-        push rax
-        sub rsp, 8
+        mov rbx, rax
+
         mov rdi, r15
         mov rsi, r14
         mov rdx, [r13+obdd_node_low_offset]
-        mov rcx, [r13+obdd_node_low_offset]
+        mov rcx, [r12+obdd_node_low_offset]
         call obdd_node_apply
+        push rax
+        sub rsp, 8
+
+        mov rdi, [r14+obdd_mgr_vars_dict_offset]
+        mov esi, [r13+obdd_node_varId_offset]
+        call dictionary_key_for_value
+        mov r8, rax
+        add rsp, 8
+        pop rax
+
         mov rdi, r14
-        add rsp,8
-        pop rdx
+        mov rsi, r8
+        mov rdx, rbx
         mov rcx, rax
-        pop r10
-        add rsp,8
-        pop r11
-        mov rsi, r11
-        call obdd_mgr_mk_node
-        jmp .fin
-    
+        jmp .callMakeNode
+
+
+    .leftSmall:
+        jmp .left_bigger
+
+    .leftBig:
+        jmp .right_bigger
+
+
     .fin:
         add rsp, 8
         pop rbx
