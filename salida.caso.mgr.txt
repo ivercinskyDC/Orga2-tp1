@@ -1,6 +1,6 @@
 Test manager
 [OBDD MANAGER]
-Mgr: 1
+Mgr: 3
 Mgr.Dict:
 [1]:0
 [0]:1

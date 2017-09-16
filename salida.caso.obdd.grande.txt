@@ -1,6 +1,6 @@
 Test obdd grande
 x01.x02.x03.x04.x05.x06.x07.x08.x09.x10.[OBDD]
-Mgr_ID:3
+Mgr_ID:5
 Value:
 x01 &
  x03 &
@@ -432,7 +432,7 @@ x01 &
      |
      (!x10)->0
 [OBDD MANAGER]
-Mgr: 3
+Mgr: 5
 Mgr.Dict:
 [1]:0
 [0]:1

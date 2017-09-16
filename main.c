@@ -9,6 +9,30 @@ char *formulasFile  =  "formulas.txt";
 
 //TODO: implementar
 void run_tests(){
+	obdd_mgr* new_mgr	= obdd_mgr_create();
+
+	obdd* x1_obdd		= obdd_mgr_var(new_mgr, "x1");
+	obdd* x2_obdd		= obdd_mgr_var(new_mgr, "x2");
+	
+	obdd* x1_or_x2_obdd	= obdd_apply_or(x1_obdd, x2_obdd);
+	obdd_print(x1_or_x2_obdd);
+	
+	obdd* x1_and_x2_obdd = obdd_apply_and(x1_obdd, x2_obdd);
+	obdd_print(x1_and_x2_obdd);
+
+	obdd* not_x1_obdd		= obdd_apply_not(x1_obdd);
+	obdd* x1_and_not_x1_obdd = obdd_apply_and(x1_obdd, not_x1_obdd);
+	obdd_print(x1_and_not_x1_obdd);
+
+	obdd* not_x2_obdd		= obdd_apply_not(x2_obdd);
+	obdd* not_x1_or_not_x2 = obdd_apply_or(not_x1_obdd, not_x2_obdd);
+	obdd* not_x1_or_not_x2_or_x1 = obdd_apply_or(not_x1_or_not_x2, x1_obdd);
+
+	obdd* exists_x2_such = obdd_exists(x1_and_not_x1_obdd, "x2");
+	obdd_print(exists_x2_such);
+
+	
+
 }
 
 int main (void){

@@ -210,7 +210,9 @@ void obdd_destroy(obdd* root){
 bool obdd_apply_equals_fkt(bool left, bool right)	{ 	return left == right;	}
 bool obdd_apply_xor_fkt(bool left, bool right)	{	return left ^ right;	}
 bool obdd_apply_and_fkt(bool left, bool right)	{	return left && right;	}
-bool obdd_apply_or_fkt(bool left, bool right)	{	return left || right;	}
+bool obdd_apply_or_fkt(bool left, bool right)	{	
+	return left || right;	
+}
 
 obdd* obdd_apply_not(obdd* value){
 	return obdd_apply_xor(value->mgr->true_obdd, value);
@@ -327,10 +329,11 @@ obdd* obdd_apply(bool (*apply_fkt)(bool,bool), obdd *left, obdd* right){
 	obdd* applied_obdd	= obdd_create(left->mgr, obdd_node_apply(apply_fkt, left->mgr, left->root_obdd, right->root_obdd));
 	
 	obdd_reduce(applied_obdd);
+	
 	return applied_obdd;
 }	
 
-/** implementar en ASM **/
+/** implementar en ASM 
 obdd_node* obdd_node_apply(bool (*apply_fkt)(bool,bool), obdd_mgr* mgr, obdd_node* left_node, obdd_node* right_node){
 	uint32_t left_var_ID	=  left_node->var_ID;
 	uint32_t right_var_ID	=  right_node->var_ID;
@@ -375,7 +378,7 @@ obdd_node* obdd_node_apply(bool (*apply_fkt)(bool,bool), obdd_mgr* mgr, obdd_nod
 
 	return applied_node;	
 }
-/**/
+**/
 
 obdd* obdd_restrict(obdd* root, char* var, bool value){
 	uint32_t var_ID	=  dictionary_value_for_key(root->mgr->vars_dict, var);
@@ -480,13 +483,9 @@ void obdd_node_print(obdd_mgr* mgr, obdd_node* root, uint32_t spaces){
 
 
 bool is_true(obdd_mgr* mgr, obdd_node* root){
-	assert(mgr != NULL);
-	assert(root != NULL);
 	return mgr->true_obdd->root_obdd->var_ID == root->var_ID;
 }
 bool is_false(obdd_mgr* mgr, obdd_node* root) {
-	assert(mgr != NULL);
-	assert(root != NULL);
 	return mgr->false_obdd->root_obdd->var_ID == root->var_ID;	
 }
 bool is_constant(obdd_mgr* mgr, obdd_node* root){

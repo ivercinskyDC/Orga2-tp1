@@ -14,9 +14,9 @@ void casoObddChico();
 void casoObddGrande();
 
 int main() {
-	//casoManager();
+	casoManager();
 	casoObddChico();
-	//casoObddGrande();
+	casoObddGrande();
 
 	int err = open("cerr.log", O_RDWR|O_CREAT|O_APPEND, 0600);
 	if (-1 == err) { perror("opening cerr.log"); return 255; }
@@ -84,7 +84,7 @@ void casoObddChico() {
 	obdd* eq1_obdd		= obdd_apply_and(x1_obdd, not_x2_or_x3_obdd);
 	obdd_print(eq1_obdd);
 
-	/*obdd* not_x2_obdd	= obdd_apply_not(x2_obdd);
+	obdd* not_x2_obdd	= obdd_apply_not(x2_obdd);
 	obdd* not_x3_obdd	= obdd_apply_not(x3_obdd);
 	obdd* not_x2_and_not_x3_obdd	= obdd_apply_and(not_x2_obdd, not_x3_obdd);
 	obdd* eq2_obdd		= obdd_apply_and(x1_obdd, not_x2_and_not_x3_obdd);
@@ -119,7 +119,7 @@ void casoObddChico() {
 	obdd_destroy(eq2_obdd);
 	obdd_destroy(eq1_eq_eq2_obdd);
 	obdd_destroy(x2_and_not_x2_obdd);
-	obdd_mgr_destroy(new_mgr);*/
+	obdd_mgr_destroy(new_mgr);
 }
 
 void casoObddGrande() {
